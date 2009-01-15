@@ -58,12 +58,10 @@ function parseRule (rule, css)
 {
 	var rc = '';
 	if (typeof(rule.charAt)=='function') {
-		print('got string?', rule);
 		rule = [rule];
 	}
 	rc	= [];
 	rule.each (function () {
-			print('testing', this);
 			rc.push (parseValue(this, css));
 		}
 	);
