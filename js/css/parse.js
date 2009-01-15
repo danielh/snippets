@@ -14,9 +14,10 @@
  */
 var conf	= {
 	default	: {
-		color			: [ 'green' ],
-		'border-color'	: [ '@default.color' ],
-		'border'		: [ '1px', '@default.border-color' ]
+		color			: 'green',
+		'border-color'	: '@default.color',
+		'border-width'	: '1px',
+		'border'		: [ '@default.border-width', '@default.border-color', 'solid' ]
 	}
 };
 
@@ -24,12 +25,17 @@ var conf	= {
 var css 	= {
 		'*'		:
 		{
-			'background-color': [ 'red' ],
-			color			: [ 'blue' ]
+			'background-color': 'red',
+			color			: 'blue'
 		},
-		'th'	:
+		th	:
 		{
-			color			: [ '@*.color' ]
+			color			: '@*.color'
+		},
+		div		:
+		{
+			color			: '@default.color',
+			border			: '@default.border'
 		}
 };
 
@@ -51,11 +57,13 @@ function parseValue (value, css)
 function parseRule (rule, css)
 {
 	var rc = '';
-	if (typeof(rule)=='string') {
+	if (typeof(rule.charAt)=='function') {
+		print('got string?', rule);
 		rule = [rule];
 	}
 	rc	= [];
 	rule.each (function () {
+			print('testing', this);
 			rc.push (parseValue(this, css));
 		}
 	);
@@ -99,5 +107,9 @@ Array.prototype.each = function (fn, data)
 };
 
 // START program
-parseCss(css);
-parseCss(conf);
+//parseCss(css);
+//parseCss(conf);
+var all = {};
+conf.each (function (idx) { all[idx] = this; });
+css.each (function (idx) { all[idx] = this; });
+parseCss(all);
