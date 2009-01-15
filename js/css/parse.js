@@ -7,7 +7,8 @@
  * 3. Merge css and custom css
  * 4. Append css to conf
  * 5. Merge appended
- * 6. Custom css!!!
+ * 6. TODO: Remove conf from css
+ * 7. Custom css!!!
 
 /* original conf 
  * first level of conf is the type, second is key/value to the type
@@ -69,20 +70,25 @@ function parseRule (rule, css)
 	return rc;
 }
 
-function parseCss (css)
+function parseCss (css, conf)
 {
+	var all = {};
+	// apply conf first
+	conf.each (function (idx) { all[idx] = this; });
+	css.each (function (idx) { all[idx] = this; });
 	var rules = [];
-	css.each (function (index, data) {
+	all.each (function (index, data) {
+			if (conf.hasOwnProperty(index)) { return true; }
 			sel		= this[0];
 			rule = [];
 			this.each (function (index) { 
-					rule.push (index + ' : ' + parseRule(this, css) + ';');
+					rule.push (index + ' : ' + parseRule(this, all) + ';');
 				}
 			);
 			rules.push (index + ' {\n' + rule.join('\n') + '\n}');
 		}
 	);
-	print (rules.join("\n"));
+	return rules;
 }
 
 // START lib 
@@ -107,7 +113,4 @@ Array.prototype.each = function (fn, data)
 // START program
 //parseCss(css);
 //parseCss(conf);
-var all = {};
-conf.each (function (idx) { all[idx] = this; });
-css.each (function (idx) { all[idx] = this; });
-parseCss(all);
+print (parseCss(css, conf).join ("\n"));
